@@ -74,7 +74,7 @@ let transformerInner = (string) => {
           let mean2 = factors[1][0];
           let std2 = factors[1][1];
 
-          let newMean = mean1 + mean2;
+          let newMean = mean1 - mean2;
           let newStd = Math.sqrt(std1 ** 2 + std2 ** 2);
           return createLogarithmNode(newMean, newStd);
           return new math.SymbolNode("xx");
