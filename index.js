@@ -203,7 +203,7 @@ let customToStringHandler = (node, options) => {
   }
 };
 
-let preprocessor = (string) => {
+let preprocessor = (string, print = console.log) => {
   // work in progress, currently not working
   let regex = /([\d]+\.?[\d]*|\.[\d]+) to ([\d]+\.?[\d]*|\.[\d]+)/g;
   function replacer(match, p1, p2) {
@@ -221,8 +221,8 @@ let preprocessor = (string) => {
 };
 // preprocessor("1.2 to 10.5 * 1.1 to 20 * 1 to 2.5 * 1 to 5");
 
-let transformer = (string) => {
-  string = preprocessor(string);
+export function transformer(string, print = console.log) {
+  string = preprocessor(string, print);
   let transformerOutput = transformerInner(string);
   let stringNew = transformerOutput.toString();
   while (stringNew != string) {
@@ -234,70 +234,4 @@ let transformer = (string) => {
     stringNew = transformerOutput.toString();
   }
   return stringNew;
-};
-
-let testTransformer = (string) => {
-  print(string);
-  console.group();
-  print("");
-  let result = transformer(string);
-  print("");
-  console.groupEnd();
-  print(`=> ${result}`);
-  print("-".repeat(52));
-  print("");
-};
-
-// Defs
-let tests1 = [
-  `lognormal(1,10) * lognormal(1,10) + lognormal(1,10)`,
-  `lognormal(1,10) * lognormal(1,10) * lognormal(1,10)`,
-  `1 to 10 * lognormal(1, 10)`,
-  `lognormal(1, 10) * 1 to 20`,
-  `1 to 20 * 100 to 1000`,
-  `(lognormal(1,10) / lognormal(1,10)) + lognormal(1,10)`,
-  `lognormal(1,10) * lognormal(1,10) / lognormal(1,10)`,
-  `1 to 10 * lognormal(1, 10) / 1 to 10`,
-  `lognormal(1, 10) * 1 to 20 / 1 to 20`,
-  `1 to 20 * 100 to 1000 / 1 to 100`,
-];
-let runTests1 = false;
-if (runTests1) {
-  console.clear();
-  tests.forEach((test) => testTransformer(test));
-}
-
-let tests2 = [
-  `3 * lognormal(1,10)`,
-  `lognormal(1,10) * 4`,
-  `lognormal(1, 10) / 3`,
-  `3 / lognormal(1, 10)`,
-  `lognormal(1,10) * lognormal(1/10) / 3`,
-  `lognormal(1, 10) / (1 to 3)`,
-];
-
-let runTests2 = false;
-if (runTests2) {
-  console.clear();
-  tests2.forEach((test) => testTransformer(test));
-}
-
-let tests3 = [
-  `(lognormal(1,10))`,
-  `lognormal(1,10) * (lognormal(1, 10) * 3) / (4 * lognormal(1,10))`,
-];
-let runTests3 = false;
-if (runTests3) {
-  console.clear();
-  tests3.forEach((test) => testTransformer(test));
-}
-
-let tests4 = [
-  `(1 to 2) * 3 * lognormal(1,10) * (1/lognormal(1,10)) / (1 to 10)`,
-  `lognormal(2.4451858789480823, 10.002219515733781) * lognormal(-1, 10) `,
-];
-let runTests4 = true;
-if (runTests4) {
-  console.clear();
-  tests4.forEach((test) => testTransformer(test));
 }
