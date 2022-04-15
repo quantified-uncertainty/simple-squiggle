@@ -2,31 +2,53 @@ import { create, all } from "mathjs";
 const math = create(all);
 
 // Helper functions
-let printNode = (x) => console.log(JSON.stringify(x, null, 4));
+let VERBOSE = true;
+let print = (x) => {
+  if (VERBOSE) {
+    console.log(x);
+  }
+};
+let printNode = (x) => print(JSON.stringify(x, null, 4));
 
 let isNumber = (x) => typeof x === "number" && isFinite(x);
 
 let isConstantNode = (arg) => {
-  return !!arg.value && isNumber(arg.value);
+  return isNumber(arg.value);
+};
+
+let isNegativeNumberNode = (arg) => {
+  return (
+    arg.op == "-" && arg.fn == "unaryMinus" && arg.args && arg.args.length == 1
+  );
 };
 let isArgLognormal = (arg) => {
   let isFn = typeof arg.fn != "undefined";
   let andNameIsLognormal = isFn && arg.fn.name == "lognormal";
   let andHasArgs = andNameIsLognormal && !!arg.args;
   let andHasTwoArgs = andHasArgs && arg.args.length == 2;
-  let andTwoArgsAreConstant =
+  let andTwoArgsAreCorrectType =
     andHasTwoArgs &&
     arg.args
       .map(
-        (innerArg) => isConstantNode(innerArg)
+        (innerArg) => {
+          let isConstant = isConstantNode(innerArg);
+          let isNegative = isNegativeNumberNode(innerArg);
+          return isConstant || isNegative;
+        }
         // innerArg
       )
       .reduce((a, b) => a && b, true);
-  return andTwoArgsAreConstant;
+  return andTwoArgsAreCorrectType;
 };
 
 let getFactors = (node) => {
-  return node.args.map((arg) => arg.value);
+  return node.args.map((arg) => {
+    if (isConstantNode(arg)) {
+      return arg.value;
+    } else if (isNegativeNumberNode(arg)) {
+      return -arg.args[0].value;
+    }
+  });
 };
 
 let createLogarithmNode = (mu, sigma) => {
@@ -44,7 +66,6 @@ let transformerInner = (string) => {
     if (node.type == "OperatorNode" && node.op == "*") {
       let hasTwoArgs = node.args && node.args.length == 2;
       if (hasTwoArgs) {
-        console.log(JSON.stringify(node.args, null, 4));
         // Multiplication of two lognormals
         let areArgsLognormal = node.args
           .map((arg) => isArgLognormal(arg))
@@ -148,7 +169,7 @@ let transformerInner = (string) => {
     return node;
   });
 
-  return transformed.toString();
+  return transformed;
 };
 
 let from90PercentCI = (low, high) => {
@@ -163,18 +184,24 @@ let from90PercentCI = (low, high) => {
 let simplePreprocessor = (string) => {
   // left for documentation purposes only
   function replacer(match, p1, p2) {
-    console.log(match);
+    print(match);
     // p1 is nondigits, p2 digits, and p3 non-alphanumericsa
-    console.log([p1, p2]);
+    print([p1, p2]);
     let result = from90PercentCI(p1, p2);
     return `lognormal(${result[0]}, ${result[1]})`;
   }
   let newString = string.replace(/(\d+) to (\d+)/g, replacer);
-  console.log(newString);
+  print(newString);
   return newString; // abc - 12345 - #$*%
 };
 
 // simplePreprocessor("1 to 10 + 1 to 20");
+
+let customToStringHandler = (node, options) => {
+  if (node.type == "ConstantNode") {
+    return node.value.toFixed(2);
+  }
+};
 
 let preprocessor = (string) => {
   // work in progress, currently not working
@@ -184,29 +211,41 @@ let preprocessor = (string) => {
     return `lognormal(${result[0]}, ${result[1]})`;
   }
   let newString = string.replace(regex, replacer);
-  if (newString != string) console.log(`\tPreprocessing: ${newString}`);
+  if (newString != string)
+    print(
+      `\t= ${math
+        .parse(newString)
+        .toString({ handler: customToStringHandler })}`
+    );
   return newString; // abc - 12345 - #$*%
 };
 // preprocessor("1.2 to 10.5 * 1.1 to 20 * 1 to 2.5 * 1 to 5");
 
 let transformer = (string) => {
   string = preprocessor(string);
-  let stringNew = transformerInner(string);
+  let transformerOutput = transformerInner(string);
+  let stringNew = transformerOutput.toString();
   while (stringNew != string) {
-    console.log(`\tNew transformation: ${stringNew}`);
+    print(
+      `\t->: ${transformerOutput.toString({ handler: customToStringHandler })}`
+    );
     string = stringNew;
-    stringNew = transformerInner(string);
+    transformerOutput = transformerInner(string);
+    stringNew = transformerOutput.toString();
   }
   return stringNew;
 };
 
 let testTransformer = (string) => {
-  console.log(`New test: ${string}`);
+  print(string);
   console.group();
+  print("");
   let result = transformer(string);
+  print("");
   console.groupEnd();
-  console.log(`Result: ${result}`);
-  console.log("");
+  print(`=> ${result}`);
+  print("-".repeat(52));
+  print("");
 };
 
 // Defs
