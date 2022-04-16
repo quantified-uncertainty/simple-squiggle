@@ -227,7 +227,7 @@ export function transformer(string, print = console.log) {
   let stringNew = transformerOutput.toString();
   while (stringNew != string) {
     print(
-      `\t->: ${transformerOutput.toString({ handler: customToStringHandler })}`
+      `\t-> ${transformerOutput.toString({ handler: customToStringHandler })}`
     );
     string = stringNew;
     transformerOutput = transformerInner(string);

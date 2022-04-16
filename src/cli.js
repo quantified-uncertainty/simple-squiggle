@@ -9,7 +9,7 @@ let print = (x) => {
 };
 
 let runTransformer = (string) => {
-  console.log(`Received: ${string}`);
+  // console.log(`Received: ${string}`);
   console.group();
   print("");
   let result = transformer(string, print);

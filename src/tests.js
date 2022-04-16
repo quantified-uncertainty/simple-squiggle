@@ -1,6 +1,6 @@
 import { transformer } from "./index.js";
 
-let VERBOSE = false;
+let VERBOSE = true;
 let print = (x) => {
   if (VERBOSE) {
     console.log(x);
@@ -19,7 +19,7 @@ let testTransformer = (string) => {
   console.log("");
 };
 
-// Defs
+// Define tests
 let tests1 = [
   `lognormal(1,10) * lognormal(1,10) + lognormal(1,10)`,
   `lognormal(1,10) * lognormal(1,10) * lognormal(1,10)`,
@@ -32,11 +32,6 @@ let tests1 = [
   `lognormal(1, 10) * 1 to 20 / 1 to 20`,
   `1 to 20 * 100 to 1000 / 1 to 100`,
 ];
-let runTests1 = false;
-if (runTests1) {
-  console.clear();
-  tests.forEach((test) => testTransformer(test));
-}
 
 let tests2 = [
   `3 * lognormal(1,10)`,
@@ -47,28 +42,35 @@ let tests2 = [
   `lognormal(1, 10) / (1 to 3)`,
 ];
 
-let runTests2 = false;
-if (runTests2) {
-  console.clear();
-  tests2.forEach((test) => testTransformer(test));
-}
-
 let tests3 = [
   `(lognormal(1,10))`,
   `lognormal(1,10) * (lognormal(1, 10) * 3) / (4 * lognormal(1,10))`,
 ];
-let runTests3 = false;
-if (runTests3) {
-  console.clear();
-  tests3.forEach((test) => testTransformer(test));
-}
 
 let tests4 = [
   `(1 to 2) * 3 * lognormal(1,10) * (1/lognormal(1,10)) / (1 to 10)`,
   `lognormal(2.4451858789480823, 10.002219515733781) * lognormal(-1, 10) `,
 ];
+
+// Run tests
+console.log("\n".repeat(10));
+console.clear();
+let runTests1 = true;
+if (runTests1) {
+  tests1.forEach((test) => testTransformer(test));
+}
+
+let runTests2 = true;
+if (runTests2) {
+  tests2.forEach((test) => testTransformer(test));
+}
+
+let runTests3 = true;
+if (runTests3) {
+  tests3.forEach((test) => testTransformer(test));
+}
+
 let runTests4 = true;
 if (runTests4) {
-  console.clear();
   tests4.forEach((test) => testTransformer(test));
 }
