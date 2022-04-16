@@ -4,7 +4,7 @@
 
 ![](imgs/simple-rick.jpg)
 
-"Simple Squiggle" is a simple parser that manipulates multiplications and divisions between numbers and lognormal. It uses a very restricted subset of Squiggle's syntax, and unlike it, it is not easily extensible. It may be useful for testing correctness of limited features of the full Squiggle.
+"Simple Squiggle" is a simple parser that manipulates multiplications and divisions between numbers and lognormal distributions. It uses an extremely restricted subset of Squiggle's syntax, and unlike it, the underlying code is not easily extensible. It may be useful for testing correctness of limited features of the full Squiggle.
 
 ![](imgs/simple-squiggle.png)
 
