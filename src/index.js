@@ -137,7 +137,6 @@ let transformerInner = (string) => {
           let newMean = mean1 - mean2;
           let newStd = Math.sqrt(std1 ** 2 + std2 ** 2);
           return createLogarithmNode(newMean, newStd);
-          return new math.SymbolNode("xx");
         } else if (isLognormalDividedByNumber) {
           let lognormalFactors = getFactors(node.args[0]);
           let mean = lognormalFactors[0];
@@ -172,13 +171,22 @@ let transformerInner = (string) => {
   return transformed;
 };
 
+const normal95confidencePoint = 1.6448536269514722;
+
 let from90PercentCI = (low, high) => {
-  let normal95confidencePoint = 1.6448536269514722;
   let logLow = Math.log(low);
   let logHigh = Math.log(high);
   let mu = (logLow + logHigh) / 2;
   let sigma = (logHigh - logLow) / (2.0 * normal95confidencePoint);
   return [mu, sigma];
+};
+
+let to90PercentCI = (mu, sigma) => {
+  let logHigh = mu + normal95confidencePoint * sigma;
+  let logLow = mu - normal95confidencePoint * sigma;
+  let high = Math.exp(logHigh);
+  let low = Math.exp(logLow);
+  return [low, high];
 };
 
 let simplePreprocessor = (string) => {
@@ -197,7 +205,7 @@ let simplePreprocessor = (string) => {
 
 // simplePreprocessor("1 to 10 + 1 to 20");
 
-let customToStringHandler = (node, options) => {
+let customToStringHandlerTwoDecimals = (node, options) => {
   if (node.type == "ConstantNode") {
     return node.value.toFixed(2);
   }
@@ -215,11 +223,21 @@ let preprocessor = (string, print = console.log) => {
     print(
       `\t= ${math
         .parse(newString)
-        .toString({ handler: customToStringHandler })}`
+        .toString({ handler: customToStringHandlerTwoDecimals })}`
     );
   return newString; // abc - 12345 - #$*%
 };
 // preprocessor("1.2 to 10.5 * 1.1 to 20 * 1 to 2.5 * 1 to 5");
+
+let customToStringHandlerLognormals = (node, options) => {
+  if (isArgLognormal(node)) {
+    let factors = getFactors(node);
+    // print(node);
+    // print(factors);
+    let ninetyPercentCI = to90PercentCI(factors[0], factors[1]);
+    return `~${ninetyPercentCI[0]} to ~${ninetyPercentCI[1]}`;
+  }
+};
 
 export function transformer(string, print = console.log) {
   string = preprocessor(string, print);
@@ -227,11 +245,16 @@ export function transformer(string, print = console.log) {
   let stringNew = transformerOutput.toString();
   while (stringNew != string) {
     print(
-      `\t-> ${transformerOutput.toString({ handler: customToStringHandler })}`
+      `\t-> ${transformerOutput.toString({
+        handler: customToStringHandlerTwoDecimals,
+      })}`
     );
     string = stringNew;
     transformerOutput = transformerInner(string);
     stringNew = transformerOutput.toString();
   }
-  return stringNew;
+  let stringNewAs90PercentCI = transformerOutput.toString({
+    handler: customToStringHandlerLognormals,
+  });
+  return [stringNew, stringNewAs90PercentCI];
 }

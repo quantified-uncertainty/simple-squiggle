@@ -8,7 +8,7 @@
 
 It may be useful for testing correctness of limited features of the full Squiggle, or for sanity-checking the validity of some Squiggle models.
 
-![](imgs/simple-squiggle.png)
+![](imgs/simple-squiggle2.png)
 
 ## Built with
 
@@ -94,7 +94,10 @@ Model: ( 2000000000 to 20000000000 ) / ( (1800000 to 2500000) * (0.25 to 0.75) *
         -> lognormal(9.53, 1.60)
 
 => lognormal(9.530291704996749, 1.596443005980748)
+   ( => ~996.6270585961881 to ~190271.4039258926 )
+
 ----------------------------------------------------
+
 ```
 
 For ease of representation, the intermediary outputs are printed only to two decimal points. But this is just a display decision; the innards of the program work with the full set of decimals.
