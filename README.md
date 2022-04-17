@@ -109,7 +109,7 @@ You can also run tests with `npm run test`
 I consider this repository to be feature complete. As such, I may tinker with the code which wraps around the core logic, but I don't really intend to add further functionality.
 
 - [ ] Make wrapper code less hacky
-- [ ] Display final lognormal as a 90% confidence interval as well
+- [x] Display final lognormal as a 90% confidence interval as well
 
 ## License
 
