@@ -25,6 +25,8 @@ It may be useful for testing correctness of limited features of the full Squiggl
 
 ### Installation
 
+#### For command line usage
+
 ```
 git clone https://github.com/quantified-uncertainty/simple-squiggle.git
 cd simple-squiggle
@@ -33,7 +35,15 @@ cd simple-squiggle
 
 The last line is not necessary, since I'm saving node_packages in the repository.
 
+#### For use inside another node program
+
+```
+npm install @forecasting/simple-squiggle
+```
+
 ## Usage
+
+### General usage
 
 Consider a squiggle model which only uses lognormals:
 
@@ -62,6 +72,10 @@ It can be simplified to the following simple squiggle model:
 ```
 
 I provide both an exportable library and a command line interface (cli). The cli can be run with `npm run cli`, which produces a prompt:
+
+### Command line
+
+After cloning this repository through github (see installation section):
 
 ```
 > npm run cli
@@ -103,6 +117,28 @@ Model: ( 2000000000 to 20000000000 ) / ( (1800000 to 2500000) * (0.25 to 0.75) *
 For ease of representation, the intermediary outputs are printed only to two decimal points. But this is just a display decision; the innards of the program work with the full set of decimals.
 
 You can also run tests with `npm run test`
+
+### Exportable library
+
+I also provide an exportable library. After installing it with npm (see installation section), you can call it with:
+
+```
+import { transformer } from "@forecasting/simple-squiggle";
+
+// Helpers
+let printer = (_) => null;
+let getSimpleSquiggleOutput = (string) => transformer(string, printer);
+
+// Model
+let model = "( 2000000000 to 20000000000 ) / ( (1800000 to 2500000) * (0.25 to 0.75) * (0.2 to 5) * (5 to 50) * (0.01 to 0.1) )"
+let result = getSimpleSquiggleOutput(model);
+console.log(result); /* [
+  'lognormal(-0.3465735902799725, 1.1485521838283161)', // lognormal expression
+  '~0.10690936969938292 to ~4.676858552304103' // 90% confidence interval expression
+] */
+
+
+```
 
 ## Roadmap
 
