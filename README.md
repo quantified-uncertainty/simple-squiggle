@@ -71,11 +71,11 @@ It can be simplified to the following simple squiggle model:
 ( 2000000000 to 20000000000 ) / ( (1800000 to 2500000) * (0.25 to 0.75) * (0.2 to 5) * (5 to 50) * (0.01 to 0.1) )
 ```
 
-I provide both an exportable library and a command line interface (cli). The cli can be run with `npm run cli`, which produces a prompt:
+I provide both an exportable library and a command line interface (cli).
 
-### Command line
+### Command line interface
 
-After cloning this repository through github (see installation section):
+After cloning this repository through github (see installation section), the cli can be run with `npm run cli`, which produces a prompt:
 
 ```
 > npm run cli
