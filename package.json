@@ -8,6 +8,9 @@
     "test": "node src/tests.js",
     "cli": "node src/cli.js"
   },
+  "exports": {
+    ".": "./src/index.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
