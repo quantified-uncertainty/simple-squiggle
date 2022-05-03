@@ -14,7 +14,9 @@ let testTransformer = (string) => {
   let result = transformer(string, print);
   print("");
   console.groupEnd();
-  console.log(`=> ${result}`);
+  console.log(`=> ${result.squiggleString}`);
+  print("");
+  print(result);
   print("-".repeat(52));
   console.log("");
 };

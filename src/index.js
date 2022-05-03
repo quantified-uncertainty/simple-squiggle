@@ -229,13 +229,40 @@ let preprocessor = (string, print = console.log) => {
 };
 // preprocessor("1.2 to 10.5 * 1.1 to 20 * 1 to 2.5 * 1 to 5");
 
-let customToStringHandlerLognormals = (node, options) => {
+let customToStringHandlerToGuesstimateSyntax = (node, options) => {
   if (isArgLognormal(node)) {
     let factors = getFactors(node);
     // print(node);
     // print(factors);
     let ninetyPercentCI = to90PercentCI(factors[0], factors[1]);
     return `~${ninetyPercentCI[0]} to ~${ninetyPercentCI[1]}`;
+  }
+};
+
+let toPrecision2 = (f) => f.toPrecision(2);
+let toShortGuesstimateString = (node) => {
+  if (isArgLognormal(node)) {
+    let factors = getFactors(node);
+    // print(node);
+    // print(factors);
+    let ninetyPercentCI = to90PercentCI(factors[0], factors[1]);
+    return `${toPrecision2(ninetyPercentCI[0])} to ${toPrecision2(
+      ninetyPercentCI[1]
+    )}`;
+  } else {
+    return null;
+  }
+};
+
+let to90CIArray = (node) => {
+  if (isArgLognormal(node)) {
+    let factors = getFactors(node);
+    // print(node);
+    // print(factors);
+    let ninetyPercentCI = to90PercentCI(factors[0], factors[1]);
+    return [ninetyPercentCI[0], ninetyPercentCI[1]];
+  } else {
+    return null;
   }
 };
 
@@ -253,8 +280,14 @@ export function transformer(string, print = console.log) {
     transformerOutput = transformerInner(string);
     stringNew = transformerOutput.toString();
   }
-  let stringNewAs90PercentCI = transformerOutput.toString({
-    handler: customToStringHandlerLognormals,
-  });
-  return [stringNew, stringNewAs90PercentCI];
+  let squiggleString = stringNew;
+  let shortGuesstimateString = toShortGuesstimateString(transformerOutput);
+  let array90CI = to90CIArray(transformerOutput);
+  // console.log(transformerOutput);
+  let result = {
+    squiggleString: squiggleString,
+    shortGuesstimateString: shortGuesstimateString,
+    array90CI: array90CI,
+  };
+  return result;
 }
