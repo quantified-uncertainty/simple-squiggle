@@ -239,7 +239,7 @@ let customToStringHandlerToGuesstimateSyntax = (node, options) => {
   }
 };
 
-let toPrecision2 = (f) => f.toPrecision(2);
+let toPrecision2 = (f) => f.toPrecision(2).toString();
 let toShortGuesstimateString = (node) => {
   if (isArgLognormal(node)) {
     let factors = getFactors(node);
