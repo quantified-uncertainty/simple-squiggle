@@ -15,8 +15,9 @@ let runTransformer = (string) => {
   let result = transformer(string, print);
   print("");
   console.groupEnd();
-  console.log(`=> ${result[0]}`);
-  console.log(`   ( => ${result[1]} )`);
+  console.log(`=> ${result.squiggleString}`);
+  console.log(`   ( => ${result.shortGuesstimateString} )`);
+
   console.log("");
 
   print("-".repeat(52));

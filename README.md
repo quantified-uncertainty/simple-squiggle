@@ -132,10 +132,13 @@ let getSimpleSquiggleOutput = (string) => transformer(string, printer);
 // Model
 let model = "( 2000000000 to 20000000000 ) / ( (1800000 to 2500000) * (0.25 to 0.75) * (0.2 to 5) * (5 to 50) * (0.01 to 0.1) )"
 let result = getSimpleSquiggleOutput(model);
-console.log(result); /* [
-  'lognormal(-0.3465735902799725, 1.1485521838283161)', // lognormal expression
-  '~0.10690936969938292 to ~4.676858552304103' // 90% confidence interval expression
-] */
+console.log(result); /* {
+  squiggleString: 'lognormal(-0.3465735902799725, 1.1485521838283161)',
+  lognormalParameters: [ -0.3465735902799725, 1.1485521838283161 ],
+  shortGuesstimateString: '0.11 to 4.7',
+  array90CI: [ 0.10690936969938292, 4.676858552304103 ]
+}
+*/
 
 
 ```

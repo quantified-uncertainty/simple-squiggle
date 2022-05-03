@@ -205,6 +205,17 @@ let simplePreprocessor = (string) => {
 
 // simplePreprocessor("1 to 10 + 1 to 20");
 
+let toLognormalParameters = (node) => {
+  if (isArgLognormal(node)) {
+    let factors = getFactors(node);
+    // print(node);
+    // print(factors);
+    return [factors[0], factors[1]];
+  } else {
+    return null;
+  }
+};
+
 let customToStringHandlerTwoDecimals = (node, options) => {
   if (node.type == "ConstantNode") {
     return node.value.toFixed(2);
@@ -286,11 +297,13 @@ export function transformer(string, print = console.log) {
     stringNew = transformerOutput.toString();
   }
   let squiggleString = stringNew;
+  let lognormalParameters = toLognormalParameters(transformerOutput);
   let shortGuesstimateString = toShortGuesstimateString(transformerOutput);
   let array90CI = to90CIArray(transformerOutput);
   // console.log(transformerOutput);
   let result = {
     squiggleString: squiggleString,
+    lognormalParameters: lognormalParameters,
     shortGuesstimateString: shortGuesstimateString,
     array90CI: array90CI,
   };
