@@ -239,14 +239,19 @@ let customToStringHandlerToGuesstimateSyntax = (node, options) => {
   }
 };
 
-let toPrecision2 = (f) => f.toPrecision(2).toString();
+let toPrecision2 = (f) => f.toPrecision(2);
+let numToString = (x) =>
+  x < 10
+    ? toPrecision2(x).toLocaleString()
+    : BigInt(Math.round(toPrecision2(x))).toString();
+
 let toShortGuesstimateString = (node) => {
   if (isArgLognormal(node)) {
     let factors = getFactors(node);
     // print(node);
     // print(factors);
     let ninetyPercentCI = to90PercentCI(factors[0], factors[1]);
-    return `${toPrecision2(ninetyPercentCI[0])} to ${toPrecision2(
+    return `${numToString(ninetyPercentCI[0])} to ${numToString(
       ninetyPercentCI[1]
     )}`;
   } else {
